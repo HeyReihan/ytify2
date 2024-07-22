@@ -1,7 +1,11 @@
-import { html, render } from "lit";
-import { audio, img, listAnchor, listContainer, listSection, loadingScreen, openInYtBtn, playAllBtn, saveListBtn, superModal, instance } from "./dom";
+import { audio, img, listAnchor, listContainer, listSection, loadingScreen, openInYtBtn, playAllBtn, superModal } from "./dom";
 import { removeFromCollection } from "./libraryUtils";
 import { blankImage, generateImageUrl, sqrThumb } from "./imageUtils";
+import StreamItem from "../components/StreamItem";
+import ListItem from "../components/ListItem";
+import { render } from "solid-js/web";
+
+export const instance = 'https://pipedapi.adminforge.de';
 
 export const params = (new URL(location.href)).searchParams;
 
@@ -50,7 +54,7 @@ export function setMetaData(
   authorUrl: string,
   music: boolean = false
 ) {
-  const imgX = generateImageUrl(id, 'maxresdefault');
+  const imgX = generateImageUrl(id, 'maxres');
   if (!getSaved('img') && !music)
     img.src = imgX;
 
@@ -116,7 +120,7 @@ export function fetchList(url: string, mix = false) {
 
   loadingScreen.showModal();
 
-  fetch(instance.value + url)
+  fetch(instance + url)
     .then(res => res.json())
     .then(group => {
       listContainer.innerHTML = '';
@@ -143,7 +147,7 @@ export function fetchList(url: string, mix = false) {
       if (!mix && token)
         setObserver(async () => {
           const data = await fetch(
-            instance.value + '/nextpage/' +
+            instance + '/nextpage/' +
             url.substring(1) + '?nextpage=' + encodeURIComponent(token)
           )
             .then(res => res.json())
@@ -164,14 +168,7 @@ export function fetchList(url: string, mix = false) {
           return data.nextpage;
         });
 
-      const type = url.includes('channel') ? 'channel' : 'playlist';
-
       openInYtBtn.innerHTML = '<i class="ri-external-link-line"></i> ' + group.name;
-      saveListBtn.innerHTML = `<i class="ri-stack-line"></i> ${type === 'channel' ? 'Subscribe' : 'Save'}`;
-      saveListBtn.dataset.url = url;
-      saveListBtn.dataset.thumbnail = group.avatarUrl;
-      saveListBtn.dataset.type = type;
-      saveListBtn.dataset.name = group.name;
 
       if (mix) playAllBtn.click();
       else {
@@ -207,17 +204,6 @@ if (params.has('channel') || params.has('playlists'))
 export function itemsLoader(itemsArray: StreamItem[]) {
   if (!itemsArray.length)
     throw new Error('No Data Found');
-
-  const streamItem = (stream: StreamItem) => html`<stream-item 
-      data-id=${stream.url.substring(9)} 
-      data-title=${stream.title}
-      data-author=${stream.uploaderName}
-      views=${stream.views > 0 ? numFormatter(stream.views) + ' views' : ''}
-      data-duration=${convertSStoHHMMSS(stream.duration)}
-      uploaded=${stream.uploadedDate}
-      data-channel_url=${stream.uploaderUrl}
-  />`;
-
   function getThumbIdFromLink(url: string) {
     // for featured playlists
     if (url.startsWith('/')) return url;
@@ -230,50 +216,83 @@ export function itemsLoader(itemsArray: StreamItem[]) {
       p.split('=')[0];
   }
 
-  const listItem = (item: StreamItem) => html`<list-item
-      title=${item.name}
-      thumbnail=${!getSaved('img') && item.thumbnail ?
-      generateImageUrl(
-        getThumbIdFromLink(
-          item.thumbnail
-        )
-      ) : blankImage
-    }
-    uploader_data = ${item.description || item.uploaderName}
-    stats = ${item.subscribers > 0 ?
+  const streamItem = (stream: StreamItem) => StreamItem({
+    id: stream.url.substring(9),
+    href: stream.url,
+    title: stream.title,
+    author: stream.uploaderName,
+    duration: stream.duration > 0 ? convertSStoHHMMSS(stream.duration) : 'LIVE',
+    uploaded: stream.uploadedDate,
+    channelUrl: stream.uploaderUrl,
+    views: (stream.views > 0 ? numFormatter(stream.views) + ' views' : '')
+  })
+
+  const listItem = (item: StreamItem) => ListItem(
+    item.name,
+    item.subscribers > 0 ?
       (numFormatter(item.subscribers) + ' subscribers') :
-      (item.videos > 0 ? item.videos + ' streams' : '')
-    }
-    type = ${item.type}
-    url = ${item.url}
-    />`;
+      (item.videos > 0 ? item.videos + ' streams' : ''),
+    generateImageUrl(
+      getThumbIdFromLink(
+        item.thumbnail
+      )
+    ),
+    item.description || item.uploaderName,
+    item.url
+  )
 
   const fragment = document.createDocumentFragment();
+  for (const item of itemsArray)
+    render(() => (item.type === 'stream' || item.type === 'video') ? streamItem(item) : listItem(item), fragment);
 
-  render(html`${itemsArray.map(item =>
-    html`<a href=${'https://youtube.com' + item.url}>
-    ${item.type !== 'stream' ?
-        listItem(item) :
-        streamItem(item)}
-    </a>`
-  )}`, fragment);
 
   return fragment;
 }
 
+/*
+// TLDR : Stream Item Click Action
+export function superClick(e: Event) {
+  const elem = e.target as HTMLAnchorElement;
+  if (elem.target === '_blank') return;
+  e.preventDefault();
+
+  const eld = elem.dataset;
+  const elc = elem.classList.contains.bind(elem.classList);
+
+  if (elc('streamItem'))
+    return elc('delete') ?
+      removeFromCollection(listAnchor.dataset.id as string, eld.id as string)
+      : player(eld.id);
+
+  else if (elc('ri-more-2-fill')) {
+    superModal.showModal();
+    history.pushState({}, '', '#');
+    const elp = elem.parentElement?.dataset;
+    for (const x in elp)
+      superModal.dataset[x] = elp[x];
+  }
+
+  else if (elc('ur_pls_item'))
+    fetchCollection(elem.textContent as string);
+
+  else if (elc('listItem')) {
+    let url = eld.url as string;
+    if (!url.startsWith('/channel'))
+      url = url.replace('?list=', 's/')
+    fetchList(url);
+    store.list.thumbnail = url + eld.thumbnail;
+  }
+}*/
 
 // TLDR : Stream Item Click Action
 export function superClick(e: Event) {
   e.preventDefault();
   const elem = e.target as HTMLElement;
+  const eld = elem.dataset;
 
-  if (elem.matches('stream-item')) {
-    const eld = elem.dataset;
+  if (elem.classList.contains('streamItem')) {
     if (elem.classList.contains('delete')) {
-      const anchor = elem.parentElement as HTMLAnchorElement;
-      const div = anchor.parentElement as HTMLDivElement;
-      const details = div.parentElement as HTMLDetailsElement;
-      removeFromCollection(details.id, eld.id as string);
+      removeFromCollection('favorites', eld.id as string)
       return;
     }
     superModal.showModal();
@@ -286,13 +305,11 @@ export function superClick(e: Event) {
     smd.duration = eld.duration;
   }
 
-  if (elem.matches('list-item')) {
-    const url = elem.getAttribute('url') as string;
-    fetchList(
-      elem.getAttribute('type') === 'playlist' ?
-        url.replace('?list=', 's/') :
-        url
-    );
+  if (elem.classList.contains('listItem')) {
+    let url = eld.url as string;
+    if (!url.startsWith('/channel'))
+      url = url.replace('?list=', 's/')
+    fetchList(url);
   }
 }
 

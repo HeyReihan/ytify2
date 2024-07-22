@@ -45,9 +45,9 @@
       <i class="ri-search-2-line"></i>
       <p>Search</p>
     </a>
-    <a href="/library" id="/library">
-      <i class="ri-stack-line"></i>
-      <p>Library</p>
+    <a href="/favorites" id="/favorites">
+      <i class="ri-heart-line"></i>
+      <p>Favorites</p>
     </a>
     <a href="/settings" id="/settings">
       <i class="ri-settings-line"></i>
@@ -95,7 +95,7 @@
 
 
     <section id="search">
-      <form id="superInputContainer">
+      <div id="superInputContainer">
         <input type="search" id="superInput" autocomplete="off"
           placeholder='Search or enter YT URL             CTRL+K' />
         <select id="searchFilters">
@@ -113,7 +113,7 @@
             <option value="music_playlists">Playlists</option>
           </optgroup>
         </select>
-      </form>
+      </div>
       <ul id="suggestions"></ul>
       <div id="searchlist">
         <h1 class="featuredPlaylists">
@@ -130,64 +130,17 @@
     </section>
 
 
-    <section id="library">
-      <details id="discover">
-        <summary>
-          <i class="ri-compass-3-line"></i> Discover
-        </summary>
-        <button>
-          <i class="ri-close-line"></i> Clear All
-        </button>
-        <button>
-          <i class="ri-subtract-line"></i> Remove
-        </button>
-        <div>
-          <h2>Listen more to discover more.</h2>
-        </div>
-      </details>
-
-      <details id="history">
-        <summary>
-          <i class="ri-memories-line"></i> History
-        </summary>
-        <button>
-          <i class="ri-close-line"></i> Clear All
-        </button>
-        <button>
-          <i class="ri-subtract-line"></i> Remove
-        </button>
-        <div></div>
-      </details>
-
-      <details id="favorites">
-        <summary>
-          <i class="ri-heart-fill"></i> Favorites
-        </summary>
-        <button>
-          <i class="ri-close-line"></i> Clear All
-        </button>
-        <button>
-          <i class="ri-subtract-line"></i> Remove
-        </button>
-        <button>
-          <i class="ri-list-check-2"></i> Enqueue
-        </button>
-        <div></div>
-      </details>
-
-      <details id="listenLater">
-        <summary>
-          <i class="ri-calendar-schedule-line"></i> Listen Later
-        </summary>
-        <button>
-          <i class="ri-close-line"></i> Clear All
-        </button>
-        <button>
-          <i class="ri-subtract-line"></i> Remove
-        </button>
-        <div></div>
-      </details>
-      <br>
+    <section id="favorites">
+      <button>
+        <i class="ri-close-line"></i> Clear All
+      </button>
+      <button>
+        <i class="ri-subtract-line"></i> Remove
+      </button>
+      <button>
+        <i class="ri-list-check-2"></i> Enqueue
+      </button>
+      <div id="favoritesContainer"></div>
       <div>
         <label id="importBtn" for="upload">
           <i class="ri-import-line"></i> Import</label>
@@ -201,67 +154,7 @@
     </section>
 
 
-    <section id="settings">
-
-      <span>
-        <label for="instance">Piped Instance</label>
-        <input type="url" value="https://pipedapi.kavin.rocks" id="instance"
-          placeholder="Enter your instance API url" />
-      </span>
-
-      <span>
-        <label for="startupTab">
-          Default Tab on Startup
-        </label>
-        <select id="startupTab">
-          <option value="">Home</option>
-          <option value="/search">Search</option>
-          <option value="/library">Library</option>
-        </select>
-      </span>
-
-      <toggle-switch id="featuredPlaylistsSwitch" checked>Featured Playlists</toggle-switch>
-      <toggle-switch id="defaultFilterSongs">Set YouTube Music as Default</toggle-switch>
-      <toggle-switch id="suggestionsSwitch" checked>Display Suggestions</toggle-switch>
-
-      <toggle-switch id="qualitySwitch">Highest Quality Audio</toggle-switch>
-
-      <toggle-switch id="thumbnailSwitch" checked>Load Thumbnails</toggle-switch>
-
-      <toggle-switch id='discoverSwitch' checked>Store Discoveries</toggle-switch>
-      <toggle-switch id='historySwitch' checked>Store History</toggle-switch>
-
-      <span>
-        <label for="roundnessChanger">Roundness</label>
-        <select id="roundnessChanger">
-          <option value="none">None</option>
-          <option value="1vmin">Light</option>
-          <option value="2vmin" selected>Medium</option>
-          <option value="4vmin">Heavy</option>
-        </select>
-      </span>
-      <span>
-        <label for="themeSelector">Theming Scheme</label><select id="themeSelector">
-          <option value="auto">System</option>
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
-      </span>
-      <toggle-switch id="highContrastSwitch">High Contrast Theme</toggle-switch>
-      <toggle-switch id="reverseNavSwitch">Reverse Navigation</toggle-switch>
-      <toggle-switch id="fullscreenSwitch">Toggle Fullscreen</toggle-switch>
-
-      <button id="restoreSettingsBtn">Restore Settings</button>
-
-      <a href="https://github.com/n-ce/ytify/wiki/changelog" target="_blank">Changelog</a>
-
-      <a href="https://github.com/n-ce/ytify/" target="_blank">Github</a>
-
-      <a href="https://t.me/ytifytg" target="_blank">Telegram</a>
-
-      <a href="https://matrix.to/#/#ytify:matrix.org" target="_blank">Matrix</a>
-
-    </section>
+    <section id="settings"></section>
 
     <section id="list">
       <span id="listTools">
@@ -270,9 +163,6 @@
         </button>
         <button id="enqueueAllBtn">
           <i class="ri-list-check-2"></i> Enqueue
-        </button>
-        <button id="saveListBtn">
-          <i class="ri-stack-line"></i> Save
         </button>
         <button id="openInYT">
           <i class="ri-external-link-line"></i> Open In YouTube
@@ -328,15 +218,7 @@
       <li><i class="ri-play-large-line"></i>Play Now</li>
       <li><i class="ri-skip-forward-line"></i>Play Next</li>
       <li><i class="ri-list-check-2"></i>Enqueue</li>
-      <li>
-        <i class="ri-play-list-add-line"></i>
-        <select id="playlistSelector">
-          <option>Add To</option>
-          <option value="+pl">Create New Playlist</option>
-          <option value="favorites">Favorites</option>
-          <option value="listenLater">Listen Later</option>
-        </select>
-      </li>
+      <li><i class="ri-heart-line"></i>Add To Favorites</li>
       <li><i class="ri-radio-line"></i>Start Radio</li>
       <li><i class="ri-download-2-fill"></i>Download</li>
       <li><i class="ri-youtube-line"></i>View Channel</li>

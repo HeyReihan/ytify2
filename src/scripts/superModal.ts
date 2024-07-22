@@ -1,14 +1,12 @@
 import { superModal } from "../lib/dom";
-import { createPlaylist, addToCollection } from "../lib/libraryUtils";
+import { addToCollection } from "../lib/libraryUtils";
 import player from "../lib/player";
 import { $, fetchList, notify } from "../lib/utils";
 import { appendToQueuelist } from "./queue";
 
 const superModalList = <HTMLUListElement>superModal.firstElementChild;
 
-const [playNow,  playNext, enqueue, li_atps, startRadio, downloadBtn, openChannelBtn] = <HTMLCollectionOf<HTMLLIElement>>superModalList.children;
-
-export const atpSelector = <HTMLSelectElement>li_atps.lastElementChild;
+const [playNow, playNext, enqueue, addToFavs, startRadio, downloadBtn, openChannelBtn] = <HTMLCollectionOf<HTMLLIElement>>superModalList.children;
 
 
 superModal.addEventListener('click', () => {
@@ -39,22 +37,9 @@ startRadio.addEventListener('click', async () => {
   fetchList('/playlists/RD' + superModal.dataset.id, true);
 });
 
-
-
-atpSelector.addEventListener('change', () => {
-  let title;
-  if (!atpSelector.value) return;
-  if (atpSelector.value === '+pl') {
-    title = prompt('Playlist Title')
-    if (title)
-      createPlaylist(title);
-  }
-  else title = atpSelector.value;
-
-  if (title)
-    addToCollection(title, superModal.dataset);
+addToFavs.addEventListener('click', () => {
+  addToCollection('favorites', superModal.dataset);
   superModal.click();
-  atpSelector.selectedIndex = 0;
 });
 
 

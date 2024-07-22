@@ -1,5 +1,5 @@
 import { audio, favButton, favIcon } from "../lib/dom";
-import { addListToCollection, addToCollection, createPlaylist, getCollection, getDB, removeFromCollection, reservedCollections, saveDB, toCollection } from "../lib/libraryUtils";
+import { addToCollection, createCollectionItem, getDB, removeFromCollection, saveDB, toCollection } from "../lib/libraryUtils";
 import { $, removeSaved, superClick } from "../lib/utils";
 import { listToQ } from "./queue";
 
@@ -40,44 +40,33 @@ cleanBtn.addEventListener('click', () => {
 
 // setup initial dom state
 
-function loadLibrary() {
-  const initialData = getDB();
+const initialData = getDB();
 
-  const initialKeys = Object.keys(initialData).filter((k) => k !== 'channels' && k !== 'playlists');
+const [clearBtn, removeBtn, enqueueBtn, container] = (document.getElementById('favorites') as HTMLDivElement).children as HTMLCollectionOf<HTMLDivElement>;
 
-  for (const key of initialKeys) {
+container.addEventListener('click', superClick);
 
-    if (!reservedCollections.includes(key)) {
-      createPlaylist(key);
-      continue;
-    }
-    const container = getCollection(key);
-    const [clearBtn, removeBtn, enqueueBtn] = (<HTMLDetailsElement>container.parentElement).querySelectorAll('button');
 
-    container.addEventListener('click', superClick);
+clearBtn.addEventListener('click', () => {
+  const db = getDB();
+  delete db['favorites'];
+  saveDB(db);
+  container.innerHTML = '';
+});
 
-    clearBtn.addEventListener('click', () => {
-      const db = getDB();
-      delete db[key];
-      saveDB(db);
-      container.innerHTML = '';
-    })
-    removeBtn.addEventListener('click', () => {
-      container.querySelectorAll('stream-item').forEach(e => e.classList.toggle('delete'));
-      removeBtn.classList.toggle('delete');
-    })
+removeBtn.addEventListener('click', () => {
+  container.querySelectorAll('.streamItem').forEach(e => e.classList.toggle('delete'));
+  removeBtn.classList.toggle('delete');
+})
 
-    if (key === 'favorites')
-      enqueueBtn.onclick = () => listToQ(container);
-  }
+enqueueBtn.onclick = () => listToQ(container);
 
-  for (const collection in initialData)
-    addListToCollection(collection, initialData[collection], initialData);
-}
+const fragment = document.createDocumentFragment();
 
-location.pathname === '/library' ?
-  addEventListener('DOMContentLoaded', loadLibrary) :
-  setTimeout(loadLibrary, 1500);
+for (const data in initialData.favorites)
+  fragment.prepend(createCollectionItem(initialData.favorites[data]))
+container.appendChild(fragment);
+
 
 
 // favorites button & data

@@ -1,13 +1,14 @@
 #superInputContainer {
   height: auto;
-  width: calc(100% - 8.3vmin);
+  width: 100%;
   padding: 2.4vmin 4vmin;
   margin-bottom: 2vmin;
   position: sticky;
   z-index: 1;
   top: 0;
   background-color: var(--onBg);
-  backdrop-filter: blur(2vmin);
+  color: var(--text);
+  backdrop-filter: blur(1rem);
   border-radius: var(--roundness);
   border: var(--border);
   box-shadow: var(--shadow);
@@ -15,10 +16,6 @@
   transition: all 0.4s;
 }
 
-#superInputContainer:focus-within {
-  backdrop-filter: none;
-  background-color: var(--bg);
-}
 
 #superInput {
   border: none;
@@ -27,6 +24,7 @@
   background: none;
   color: inherit;
   font-size: medium;
+  font-weight: bold;
 }
 
 #superInput::placeholder {
@@ -42,6 +40,7 @@
   color: inherit;
   text-align: right;
   appearance: none;
+  font-weight: bold;
 }
 
 #suggestions {
@@ -49,7 +48,7 @@
   overflow-y: scroll;
   position: absolute;
   z-index: 1;
-  margin-top: 11.9vmin;
+  margin-top: 11vmin;
   width: 80vmin;
   background-color: var(--bg);
   list-style-type: none;
@@ -62,8 +61,8 @@
 }
 
 #suggestions li {
-  background-color: var(--onBg);
-  font-weight: bold;
+  background: var(--onBg);
+  color: var(--text);
   padding: 1vmin 3vmin;
   margin-top: 0.4vmin;
 }
@@ -71,8 +70,8 @@
 #suggestions li:hover,
 #suggestions li:focus,
 #suggestions li.hover {
-  background-color: var(--text);
-  color: var(--bg);
+  background-color: var(--onBg);
+  color: var(--text);
 }
 
 h1.featuredPlaylists {
@@ -81,5 +80,6 @@ h1.featuredPlaylists {
   border-radius: var(--roundness);
   display: flex;
   justify-content: center;
-  align-items: center
+  align-items: center;
+  font-weight: normal;
 }

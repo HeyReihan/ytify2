@@ -1,15 +1,13 @@
 import { img, canvas, context } from "../lib/dom";
 import { blankImage } from "../lib/imageUtils";
 import player from "../lib/player";
-import { getSaved, idFromURL, params, removeSaved, save } from "../lib/utils";
+import { getSaved, idFromURL, params } from "../lib/utils";
 
 
 const style = document.documentElement.style;
-const cssVar = style.setProperty.bind(style);
+export const cssVar = style.setProperty.bind(style);
 const tabColor = <HTMLMetaElement>document.head.children.namedItem('theme-color');
-const themeSelector = <HTMLSelectElement>document.getElementById('themeSelector');
 const systemDark = matchMedia('(prefers-color-scheme:dark)');
-const highContrastSwitch = <HTMLSelectElement>document.getElementById('highContrastSwitch');
 
 const translucent = (r: number, g: number, b: number) => `rgb(${r},${g},${b},${0.5})`;
 
@@ -70,7 +68,7 @@ const palette: Scheme = {
 };
 
 
-function themer() {
+export function themer() {
 
   const canvasImg = new Image();
   canvasImg.onload = () => {
@@ -82,7 +80,7 @@ function themer() {
     const data = context.getImageData(0, 0, canvasImg.width, canvasImg.height).data;
     const len = data.length;
 
-    const nthPixel = 80;
+    const nthPixel = 160;
 
     let r = 0, g = 0, b = 0;
 
@@ -97,14 +95,12 @@ function themer() {
       b = Math.floor(b / amount);
 
 
-    const theme = themeSelector.selectedOptions[0].value;
-    let light = 'light', dark = 'dark';
-    if (getSaved('highContrast'))
-      light = 'white', dark = 'black';
-
+    const theme = getSaved('theme') || 'auto';
+    const autoDark = systemDark.matches;
     const scheme = theme === 'auto' ?
-      (systemDark.matches ? dark : light) :
-      theme === 'light' ? light : dark;
+      autoDark ? 'dark' : 'light' :
+      theme === 'auto-hc' ?
+        autoDark ? 'black' : 'white' : theme;
 
 
     cssVar('--bg', palette[scheme].bg(r, g, b));
@@ -119,46 +115,13 @@ function themer() {
   canvasImg.src = img.src;
 }
 
-highContrastSwitch.addEventListener('click', () => {
-  getSaved('highContrast') ?
-    removeSaved('highContrast') :
-    save('highContrast', 'true');
-  themer();
-})
-
-if (getSaved('highContrast'))
-  highContrastSwitch.toggleAttribute('checked');
 
 
-
-themeSelector.addEventListener('change', () => {
-  themer();
-  themeSelector.value === 'auto' ?
-    removeSaved('theme') :
-    save('theme', themeSelector.value);
-});
-
-
-themeSelector.value = getSaved('theme') || 'auto';
 
 img.addEventListener('load', themer);
 
 systemDark.addEventListener('change', themer);
 
-
-
-const roundnessChanger = <HTMLSelectElement>document.getElementById('roundnessChanger');
-if (getSaved('roundness')) {
-  roundnessChanger.value = getSaved('roundness') || '2vmin';
-  cssVar('--roundness', roundnessChanger.value);
-}
-
-roundnessChanger.addEventListener('change', () => {
-  cssVar('--roundness', roundnessChanger.value);
-  roundnessChanger.value === '2vmin' ?
-    removeSaved('roundness') :
-    save('roundness', roundnessChanger.value)
-})
 
 
 const streamQuery = params.get('s') || idFromURL(params.get('url') || params.get('text'));

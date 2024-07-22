@@ -1,7 +1,6 @@
 import { audio, playButton, queuelist } from "../lib/dom";
-import { getCollection, addToCollection } from "../lib/libraryUtils";
 import player from "../lib/player";
-import { convertSStoHHMMSS, params, getSaved } from "../lib/utils";
+import { convertSStoHHMMSS, params } from "../lib/utils";
 import { appendToQueuelist, firstItemInQueue } from "./queue";
 
 
@@ -43,29 +42,17 @@ playButton.addEventListener('click', () => {
 });
 
 
-let historyID: string | undefined = '';
-let historyTimeoutId = 0;
-
-
 audio.addEventListener('playing', () => {
   playButton.classList.replace(playButton.className, 'ri-pause-circle-fill');
   ms.playbackState = 'playing';
   const id = <string>audio.dataset.id;
   if (!streamHistory.includes(id))
     streamHistory.push(id);
-  const firstElementInHistory = <HTMLElement>getCollection('history').firstElementChild;
-  if (!getSaved('history') ||
-    firstElementInHistory.dataset.id !== id)
-    historyTimeoutId = window.setTimeout(() => {
-      if (historyID === audio.dataset.id)
-        addToCollection('history', audio.dataset);
-    }, 1e4);
 });
 
 audio.addEventListener('pause', () => {
   playButton.classList.replace('ri-pause-circle-fill', 'ri-play-circle-fill');
   ms.playbackState = 'paused';
-  clearTimeout(historyTimeoutId);
 });
 
 
@@ -81,8 +68,6 @@ const playableCheckerID = setInterval(() => {
 audio.addEventListener('loadeddata', () => {
   playButton.classList.replace('ri-loader-3-line', 'ri-play-circle-fill');
   if (isPlayable) audio.play();
-  historyID = audio.dataset.id;
-  clearTimeout(historyTimeoutId);
 
   // persist playback speed
   if (playSpeed.value !== '1.00')
@@ -93,7 +78,6 @@ audio.addEventListener('loadeddata', () => {
 
 audio.addEventListener('waiting', () => {
   playButton.classList.replace(playButton.className, 'ri-loader-3-line');
-  clearTimeout(historyTimeoutId);
 });
 
 

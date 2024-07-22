@@ -19,16 +19,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.ri-home-line:before {
-  content: "\ee2b";
-}
-
 .ri-search-2-line:before {
   content: "\f0cd";
-}
-
-.ri-stack-line:before {
-  content: "\f181";
 }
 
 .ri-settings-line:before {
@@ -51,18 +43,6 @@
   content: "\f32d";
 }
 
-.ri-play-circle-fill:before {
-  content: "\f008";
-}
-
-.ri-pause-circle-fill:before {
-  content: "\efd5";
-}
-
-.ri-stop-circle-fill:before {
-  content: "\f19e";
-}
-
 .ri-loader-3-line:before {
   content: "\eec4";
 }
@@ -77,10 +57,6 @@
 
 .ri-subtract-line:before {
   content: "\f1af";
-}
-
-.ri-filter-2-line:before {
-  content: "\ed23";
 }
 
 .ri-volume-down-fill:before {
@@ -99,32 +75,12 @@
   content: "\f074";
 }
 
-.ri-play-list-add-line:before {
-  content: "\f00f";
-}
-
-.ri-play-list-2-fill:before {
-  content: "\f00c";
-}
-
-.ri-compass-3-line:before {
-  content: "\ebbe";
-}
-
-.ri-memories-line:before {
-  content: "\f341";
-}
-
 .ri-heart-line:before {
   content: "\ee0f";
 }
 
 .ri-heart-fill:before {
   content: "\ee0e";
-}
-
-.ri-calendar-schedule-line:before {
-  content: "\f3f3";
 }
 
 .ri-import-line:before {
@@ -137,10 +93,6 @@
 
 .ri-delete-bin-2-line:before {
   content: "\ec1e";
-}
-
-.ri-list-check-2:before {
-  content: "\eeb9";
 }
 
 .ri-play-large-line:before {
@@ -157,6 +109,26 @@
 
 .ri-youtube-line:before {
   content: "\f2d5";
+}
+
+.ri-play-circle-fill:before {
+  content: "\f008";
+}
+
+.ri-pause-circle-fill:before {
+  content: "\efd5";
+}
+
+.ri-stop-circle-fill:before {
+  content: "\f19e";
+}
+
+.ri-list-check-2:before {
+  content: "\eeb9";
+}
+
+.ri-home-line:before {
+  content: "\ee2b";
 }
 
 .ri-external-link-line:before {

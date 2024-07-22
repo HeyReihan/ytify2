@@ -1,17 +1,15 @@
-import { instance, loadingScreen, searchFilters, superInput } from "../lib/dom";
+import { loadingScreen, searchFilters, superInput } from "../lib/dom";
 import player from "../lib/player";
-import { $, getSaved, save, itemsLoader, idFromURL, params, notify, removeSaved, superClick } from "../lib/utils";
-import { ytmPlsSwitch } from "./settings";
+import { $, getSaved, itemsLoader, idFromURL, params, notify, superClick, instance } from "../lib/utils";
 
 const searchlist = <HTMLDivElement>document.getElementById('searchlist');
 const suggestions = <HTMLUListElement>document.getElementById('suggestions');
-const suggestionsSwitch = <HTMLSelectElement>document.getElementById('suggestionsSwitch');
 
 
 let nextPageToken = '';
 
 const loadMoreResults = (token: string, query: string) =>
-  fetch(`${instance.value}/nextpage/search?nextpage=${encodeURIComponent(token)}&${query}`)
+  fetch(`${instance}/nextpage/search?nextpage=${encodeURIComponent(token)}&${query}`)
     .then(res => res.json())
     .catch(x => console.log('e:' + x))
 
@@ -48,12 +46,12 @@ function searchLoader() {
 
   loadingScreen.showModal();
 
-  fetch(instance.value + '/' + query)
+  fetch(instance + '/' + query)
     .then(res => res.json())
     .then(async (searchResults) => {
       let items = searchResults.items;
       nextPageToken = searchResults.nextpage;
-      if (!items) throw new Error('Search couldn\'t be resolved on ' + instance.value);
+      if (!items) throw new Error('Search couldn\'t be resolved on ' + instance);
 
       if (sortByTime && nextPageToken) {
         for (let i = 0; i < 3; i++) {
@@ -133,7 +131,7 @@ superInput.addEventListener('input', async () => {
 
   suggestions.style.display = 'block';
 
-  const data = await fetch(instance.value + '/suggestions/?query=' + text).then(res => res.json());
+  const data = await fetch(instance + '/suggestions/?query=' + text).then(res => res.json());
 
   if (!data.length) return;
 
@@ -190,8 +188,8 @@ superInput.addEventListener('keydown', _ => {
 });
 
 // CTRL + K focus search bar
-document.addEventListener("keydown", function(event) {
-  if (event.ctrlKey && event.key === "K")
+document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.key === 'K')
     superInput.focus();
 });
 
@@ -199,17 +197,6 @@ document.addEventListener("keydown", function(event) {
 searchlist.addEventListener('click', superClick);
 
 searchFilters.addEventListener('change', searchLoader);
-
-suggestionsSwitch.addEventListener('click', () => {
-  getSaved('searchSuggestions') ?
-    removeSaved('searchSuggestions') :
-    save('searchSuggestions', 'off');
-  suggestions.style.display = 'none';
-
-});
-
-if (getSaved('searchSuggestions'))
-  suggestionsSwitch.removeAttribute('checked')
 
 
 // search param /?q=
@@ -226,7 +213,7 @@ if (params.has('q')) {
 
 function insertYtmPls() {
 
-  if (ytmPlsSwitch.hasAttribute('checked'))
+  if (!getSaved('featuredPlaylists'))
     fetch('https://raw.githubusercontent.com/wiki/n-ce/ytify/ytm_pls.md')
       .then(res => res.text())
       .then(text => text.split('\n'))

@@ -2,7 +2,7 @@ import { audio, queuelist, searchFilters, superInput, superModal } from "../lib/
 import { fetchList, params } from "../lib/utils";
 
 const anchors = document.querySelectorAll('nav a');
-const routes = ['/', '/upcoming', '/search', '/library', '/settings', '/list'];
+const routes = ['/', '/upcoming', '/search', '/favorites', '/settings', '/list'];
 
 
 function showSection(id: string) {

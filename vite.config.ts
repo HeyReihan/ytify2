@@ -1,5 +1,6 @@
 import { defineConfig, PluginOption } from 'vite';
 import autoprefixer from 'autoprefixer';
+import solidPlugin from 'vite-plugin-solid';
 
 
 const injectEruda = (serve: boolean) => serve ? (<PluginOption>{
@@ -26,7 +27,9 @@ const injectEruda = (serve: boolean) => serve ? (<PluginOption>{
 
 
 export default defineConfig(({ command }) => ({
-  plugins: [injectEruda(command === 'serve')],
+  plugins: [
+    solidPlugin(),
+    injectEruda(command === 'serve')],
   css: {
     postcss: {
       plugins: [autoprefixer()]

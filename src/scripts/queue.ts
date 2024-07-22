@@ -1,6 +1,7 @@
-import { $ } from "../lib/utils";
 import { queuelist, upcomingBtn } from "../lib/dom";
 import player from "../lib/player";
+import { render } from "solid-js/web";
+import StreamItem from "../components/StreamItem";
 
 const queueArray: string[] = [];
 
@@ -26,27 +27,30 @@ export function appendToQueuelist(data: DOMStringMap, prepend: boolean = false) 
     queueArray.unshift(data.id) :
     queueArray.push(data.id);
 
-  const queueItem = $('stream-item');
-  queueItem.dataset.title = <string>data.title;
-  queueItem.dataset.author = data.author;
-  queueItem.dataset.duration = data.duration;
-  queueItem.dataset.id = data.id;
+
+
+  const fragment = document.createDocumentFragment();
+
+  render(() => StreamItem({
+    id: data.id || '',
+    title: data.title || '',
+    author: data.author || '',
+    duration: data.duration || ''
+  }), fragment);
+
 
   prepend ?
-    queuelist.prepend(queueItem) :
-    queuelist.appendChild(queueItem);
+    queuelist.prepend(fragment) :
+    queuelist.appendChild(fragment);
 
 }
 
 
 queuelist.addEventListener('click', e => {
   const queueItem = e.target as HTMLElement;
-  if (!queueItem.matches('stream-item')) return;
+  if (!queueItem.matches('.streamItem')) return;
   const id = queueItem.dataset.id || '';
-  if (queueItem.classList.contains('delete')) {
-    const trashHistory = sessionStorage.getItem('trashHistory');
-    sessionStorage.setItem('trashHistory', trashHistory + id);
-  } else player(id);
+  if (!queueItem.classList.contains('delete')) player(id);
 
   const index = queueArray.indexOf(id);
 
@@ -58,7 +62,7 @@ queuelist.addEventListener('click', e => {
 // clones any list items from the provided container to queue
 
 export function listToQ(container: HTMLDivElement) {
-  const items = container.querySelectorAll('stream-item') as NodeListOf<HTMLElement>;
+  const items = container.querySelectorAll('.streamItem') as NodeListOf<HTMLElement>;
   items.forEach(item => {
     appendToQueuelist(item.dataset);
   });
@@ -85,7 +89,7 @@ shuffleQBtn.addEventListener('click', () => {
 });
 
 removeQBtn.addEventListener('click', () => {
-  queuelist.querySelectorAll('stream-item').forEach(el => {
+  queuelist.querySelectorAll('.streamItem').forEach(el => {
     el.classList.toggle('delete')
   });
   removeQBtn.classList.toggle('delete');

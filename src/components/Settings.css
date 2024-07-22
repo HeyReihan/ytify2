@@ -1,0 +1,54 @@
+#settings {
+  background: var(--onBg);
+  border-radius: var(--roundness);
+  border: var(--border);
+  padding: 1vmin 2vmin;
+  width: 100%;
+}
+
+#settings.view {
+  display: block;
+}
+
+#settings div {
+  display: flex;
+  margin: 1rem 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+#settings input[type='checkbox'] {
+  accent-color: var(--bg);
+  cursor: pointer;
+}
+
+#settings>span {
+  display: flex;
+  margin: 1rem 0;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#settings select,
+#instance {
+  background: var(--onBg);
+  border-radius: var(--roundness);
+  border: var(--border);
+  padding: 1vmin;
+}
+
+#settings a {
+  background: var(--onBg);
+  color: var(--text);
+  border-radius: var(--roundness);
+  border: var(--border);
+  padding: 1vmin;
+  margin: 1vmin 2vmin;
+  display: inline-block;
+}
+
+#settings button {
+  margin: 2vmin auto;
+  display: block;
+}

@@ -1,6 +1,6 @@
 {
   "name": "ytify",
-  "version": "6.9.Lite",
+  "version": "Lite",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -8,13 +8,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "lit": "latest"
+    "solid-js": "latest"
   },
   "devDependencies": {
     "autoprefixer": "latest",
     "eruda": "latest",
     "typescript": "latest",
-    "vite": "latest"
+    "vite": "latest",
+    "vite-plugin-solid": "latest"
   },
   "browserslist": [
     "defaults"

@@ -12,10 +12,10 @@ export const blankImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAA
 // Generates both channel and stream thumbnails
 export const generateImageUrl = (
   id: string,
-  res: string = 'mqdefault'
-) => 'https://wsrv.nl?url=' + (id.startsWith('/') ?
-  `yt3.googleusercontent.com${id}=s176-c-k-c0x00ffffff-no-rj` :
-  `i.ytimg.com/vi_webp/${id}/${res}.webp`);
+  res: string = 'mq'
+) => 'https://pipedimg.adminforge.de' + (id.startsWith('/') ?
+  `${id}=s176-c-k-c0x00ffffff-no-rj?host=yt3.googleusercontent.com` :
+  `/vi_webp/${id}/${res}default.webp?host=i.ytimg.com`);
 
 // Square Image Generator 
 export function sqrThumb(canvasImg: HTMLImageElement) {

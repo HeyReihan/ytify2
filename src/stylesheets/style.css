@@ -3,7 +3,6 @@
 @import 'footer.css';
 @import 'home.css';
 @import 'search.css';
-@import 'settings.css';
 @import 'superModal.css';
 @import 'snackbar.css';
 
@@ -16,8 +15,8 @@
   --shadowColor: transparent;
   --shadow: 0 0.5vmin 1.5vmin var(--shadowColor);
   --roundness: 2vmin;
-  --defaultBg: var(--text);
-  --defaultText: var(--bg);
+  --defaultBg: var(--onBg);
+  --defaultText: var(--text);
 }
 
 
@@ -26,6 +25,23 @@ body {
   margin: 0;
   padding: 0;
   height: 100dvh;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
 }
 
 body {
@@ -74,7 +90,7 @@ section.view {
 
   main {
     height: calc(100dvh - 6%);
-    width: 94%;
+    width: 100%;
     padding: 3%;
   }
 
@@ -127,8 +143,7 @@ input {
   outline: none;
 }
 
-select,
-#instance {
+select {
   font-family: inherit;
   background: none;
   outline: none;
@@ -144,6 +159,7 @@ dialog[open] {
   justify-content: center;
   align-items: center;
   animation: boing 0.3s ease-in-out forwards;
+  margin: auto;
 }
 
 @keyframes boing {
@@ -165,62 +181,12 @@ dialog::backdrop {
 }
 
 
-#library>div {
-  display: flex;
-  margin-top: 1vmin;
-}
-
-#library>div>label {
-  background-color: var(--onBg);
-  color: var(--text);
-  border: var(--border);
-  border-radius: var(--roundness);
-  padding: 1vmin;
-  margin: 0 3vmin;
-  font-size: large;
-}
-
-
-details {
-  width: calc(100% - 4.3vmin);
-  background-color: var(--onBg);
-  color: var(--text);
-  padding: 2vmin;
-  margin-top: 4vmin;
-  border: var(--border);
-  border-radius: var(--roundness);
-}
-
-details>div {
-  margin-top: 3vmin;
-}
-
-details>summary {
-  list-style: none;
-  font-size: larger;
-  transition: all 0.3s ease-in-out;
-}
-
-details[open]>summary {
-  font-size: xx-large;
-  margin-bottom: 3vmin;
-}
-
 
 a {
   text-decoration: none;
   color: inherit;
 }
 
-stream-item,
-list-item {
-  transition: all 0.3s ease-out;
-}
-
-stream-item:hover,
-list-item:hover {
-  transform: scale(0.95);
-}
 
 .hide {
   display: none !important;
@@ -233,17 +199,7 @@ list-item:hover {
   --text: #eaa;
 }
 
-.filter {
-  --defaultBg: #055;
-  --defaultText: #6dd;
-}
-
-.checked {
-  --defaultBg: #505;
-  --defaultText: #faf;
-}
-
-details,
+#favorites,
 #queuetools,
 #listTools,
 #settings {
@@ -299,4 +255,12 @@ details,
     transform: scale(2);
     opacity: 0;
   }
+}
+
+#favorites.view {
+  display: inline-block;
+}
+
+#favoritesContainer {
+  margin: 1rem 0;
 }

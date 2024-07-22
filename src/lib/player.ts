@@ -1,6 +1,6 @@
-import { audio, favButton, favIcon, instance, playButton } from "./dom";
-import { convertSStoHHMMSS, notify, params, setMetaData, getSaved } from "./utils";
-import { getDB, addListToCollection } from "./libraryUtils";
+import { audio, favButton, favIcon, playButton } from "./dom";
+import { convertSStoHHMMSS, notify, params, setMetaData, getSaved, instance } from "./utils";
+import { getDB } from "./libraryUtils";
 
 
 const bitrateSelector = <HTMLSelectElement>document.getElementById('bitrateSelector');
@@ -15,13 +15,13 @@ bitrateSelector.addEventListener('change', () => {
   audio.play();
 });
 
-function resolveSrc(audioStreams: Record<'codec' | 'url' | 'quality' | 'bitrate', string>[], isMusic: boolean = true) {
+function resolveSrc(audioStreams: Record<'codec' | 'url' | 'quality' | 'bitrate', string>[], isMusic: boolean = true): string {
   const noOfBitrates = audioStreams.length;
 
   if (!noOfBitrates) {
     notify('NO AUDIO STREAMS AVAILABLE.');
     playButton.classList.replace(playButton.className, 'ri-stop-circle-fill');
-    return;
+    return '';
   }
   const preferedCodec = 'opus';
   let index = -1;
@@ -34,7 +34,7 @@ function resolveSrc(audioStreams: Record<'codec' | 'url' | 'quality' | 'bitrate'
     const oldUrl = new URL(_.url);
 
     // Conditional Proxying
-    const newUrl = (isMusic) ? _.url : _.url.replace(oldUrl.origin, oldUrl.host);
+    const newUrl = (isMusic) ? _.url.replace('pipedproxy', 'invidious') : _.url.replace(oldUrl.origin, oldUrl.host);
 
     // add to DOM
     bitrateSelector.add(new Option(`${_.quality} ${codec}`, newUrl));
@@ -57,7 +57,7 @@ export default async function player(id: string | null = '') {
 
   playButton.classList.replace(playButton.className, 'ri-loader-3-line');
 
-  const data = await fetch(instance.value + '/streams/' + id)
+  const data = await fetch(instance + '/streams/' + id)
     .then(res => res.json())
     .then(res => {
       if ('error' in res)
@@ -71,10 +71,17 @@ export default async function player(id: string | null = '') {
 
 
 
-  audio.src = audio.canPlayType('audio/ogg') ? resolveSrc(
-    data.audioStreams
-      .sort((a: { bitrate: number }, b: { bitrate: number }) => (a.bitrate - b.bitrate))
-    , data.category === 'Music') : data.hls;
+  if (audio.canPlayType('audio/ogg')) {
+    bitrateSelector.className = ''
+    audio.src = resolveSrc(
+      data.audioStreams
+        .sort((a: { bitrate: number }, b: { bitrate: number }) => (a.bitrate - b.bitrate))
+      , data.category === 'Music');
+  }
+  else {
+    bitrateSelector.className = 'hide';
+    audio.src = data.hls;
+  }
 
   // remove ' - Topic' from name if it exists
 
@@ -118,60 +125,4 @@ export default async function player(id: string | null = '') {
     favIcon.classList.add('ri-heart-fill');
   }
 
-
-
-  if (getSaved('discover') === 'off') return;
-
-  // related streams data injection as discovery data after 10 seconds
-
-  setTimeout(() => {
-    if (id !== audio.dataset.id) return;
-
-    const db = getDB();
-    if (!db.hasOwnProperty('discover')) db.discover = {};
-    data.relatedStreams.forEach(
-      (stream: Recommendation) => {
-        if (
-          stream.type !== 'stream' ||
-          stream.duration < 100 || stream.duration > 3000) return;
-
-        const rsId = stream.url.slice(9);
-
-        // merges previous discover items with current related streams
-        db.discover.hasOwnProperty(rsId) ?
-          (<number>db.discover[rsId].frequency)++ :
-          db.discover[rsId] = {
-            id: rsId,
-            title: stream.title,
-            author: stream.uploaderName,
-            duration: convertSStoHHMMSS(stream.duration),
-            channelUrl: stream.uploaderUrl,
-            frequency: 1
-          }
-      });
-
-    // convert to array
-    let array = Object.entries(db.discover);
-
-    // Randomize Array
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-
-    // remove if exists in history
-
-    array = array.filter(e => !db.history.hasOwnProperty(e[0]));
-
-    // randomly remove items from array when limit crossed
-    let len = array.length;
-    while (len > 256) {
-      const i = Math.floor(Math.random() * len)
-      array.splice(i, 1);
-      len--;
-    }
-
-    // convert the new merged+randomized discover back to object and inject it
-    addListToCollection('discover', Object.fromEntries(array), db);
-  }, 20000);
 }

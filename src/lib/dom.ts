@@ -4,8 +4,6 @@ export const canvas = <HTMLCanvasElement>document.querySelector('canvas');
 
 export const context = <CanvasRenderingContext2D>canvas.getContext('2d');
 
-export const instance = <HTMLSelectElement>document.getElementById('instance');
-
 export const superInput = <HTMLInputElement>document.getElementById('superInput');
 
 export const searchFilters = <HTMLSelectElement>document.getElementById('searchFilters');
@@ -30,7 +28,7 @@ export const favButton = <HTMLInputElement>document.getElementById('favButton');
 
 export const favIcon = <HTMLLabelElement>favButton.nextElementSibling;
 
-export const [playAllBtn, enqueueBtn, saveListBtn, openInYtBtn] = <HTMLCollectionOf<HTMLButtonElement>>(<HTMLSpanElement>document.getElementById('listTools')).children;
+export const [playAllBtn, enqueueBtn, openInYtBtn] = <HTMLCollectionOf<HTMLButtonElement>>(<HTMLSpanElement>document.getElementById('listTools')).children;
 
 export const loadingScreen = <HTMLDialogElement>document.getElementById('loadingScreen');
 loadingScreen.addEventListener('click', () => loadingScreen.close());
