@@ -30,11 +30,3 @@
   margin-right: 2vmin;
   font-size: larger;
 }
-
-
-#playlistSelector {
-  font-weight: inherit;
-  font-size: inherit;
-  margin-left: -3px;
-  width: 16ch;
-}
