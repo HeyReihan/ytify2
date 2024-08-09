@@ -56,16 +56,6 @@ async function fetchAudioUrl(instance: string) {
         const proxiedUrl = audioUrl.replace(new URL(audioUrl).origin, invidiousInstance);
         const t = performance.now();
 
-        await fetch(hyperpipeInstance + data.uploaderUrl)
-          .then(res => res.json())
-          .then(data => {
-            console.log('\n✅ loaded music artist on ' + name);
-            if ('playlistId' in data) score++;
-          })
-          .catch(() => {
-            console.log('\n❌ failed to load music artist on ' + name);
-          });
-
         await fetch(proxiedUrl)
           .then(_ => _.blob())
           .then(blob => {
@@ -78,8 +68,18 @@ async function fetchAudioUrl(instance: string) {
           .catch(() => {
             console.log('\n❌ failed to load music stream on ' + name);
           });
+        await fetch(hyperpipeInstance + data.uploaderUrl)
+          .then(res => res.json())
+          .then(data => {
+            console.log('\n✅ loaded music artist on ' + name);
+            if ('playlistId' in data) score++;
+          })
+          .catch(() => {
+            console.log('\n❌ failed to load music artist on ' + name);
+          });
       }
       else throw new Error();
+      
     })
     .catch(() => {
       console.log(`\n❌ failed to fetch music stream data on ${name}`);
