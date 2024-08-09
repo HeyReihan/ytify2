@@ -72,7 +72,7 @@ async function fetchAudioUrl(instance: string) {
           .then(res => res.json())
           .then(data => {
             console.log('\n✅ loaded music artist on ' + name);
-            if ('playlistId' in data) score++;
+            if ('playlistId' in data) score += 0.5;
           })
           .catch(() => {
             console.log('\n❌ failed to load music artist on ' + name);
